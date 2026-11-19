@@ -39,7 +39,7 @@ You may need to set an unexpectedly high propagation time (≥ 900 seconds) to g
 Credentials
 -----------
 
-Use of this plugin requires a configuration file containing a GoDaddy Personal Access Token (PAT), obtained from your [developer.godaddy.com](https://developer.godaddy.com/). The token must have permission to manage DNS records for the domain.
+Use of this plugin requires a configuration file containing a GoDaddy Personal Access Token (PAT), obtained from your [developer.godaddy.com](https://developer.godaddy.com/). The token must have permission to manage DNS records for the domain, as well as domain read permission (`domains.domain:read` and `domains.dns:update`).
 
 An example `credentials.ini` file:
 
