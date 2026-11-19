@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "certbot-dns-godaddy"
-version = "2.8.0"
-description = "A certbot plugin that implements letsencrypt dns wildcard support for godaddy using lexicon"
+version = "3.0.0"
+description = "A Certbot plugin for GoDaddy DNS challenges using the Domains API v3"
 authors = ["Dustyn Gibson <miigotu@gmail.com>"]
 license = "Apache-2.0"
 readme = "README.md"
@@ -30,7 +30,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
 certbot = ">=2.8.0"
-dns-lexicon = ">=3.14.0"
+requests = ">=2.20.0"
 
 [tool.poetry.dev-dependencies]
 isort = "^5.8.0"

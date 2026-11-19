@@ -5,7 +5,7 @@ certbot-dns-godaddy
 
 [godaddy](https://www.godaddy.com/) DNS Authenticator plugin for [certbot](https://certbot.eff.org/).
 
-This plugin automates the process of completing a `dns-01` challenge by creating, and subsequently removing, `TXT` records using the godaddy [API](https://developer.godaddy.com/doc/endpoint/domains) via [lexicon](https://github.com/AnalogJ/lexicon).
+This plugin automates the process of completing a `dns-01` challenge by creating, and subsequently removing, `TXT` records using the GoDaddy [Domains API v3](https://developer.godaddy.com/en/docs/references/rest/domains/v3/create-dns-record).
 
 **Note:** This manual assumes certbot >=2.7.4 which has improved the naming scheme for external plugins.
 
@@ -32,25 +32,28 @@ To start using DNS authentication for godaddy, pass the following arguments on c
 | `--authenticator dns-godaddy`           | select the authenticator plugin (Required)                                            |
 | `--dns-godaddy-credentials FILE`        | godaddy credentials INI file. (Required)                                              |
 | `--dns-godaddy-propagation-seconds NUM` | how long to wait before ACME tries to verify DNS. (Default: 30, Recommended: \>= 600) |
-| `--dns-godaddy-ttl NUM`  | TTL for TXT record. (Default 600. For WildCard >= 600 )
+| `--dns-godaddy-ttl NUM`                 | TTL for TXT record, 600-86400 seconds. (Default: 600)                                 |
 
 You may need to set an unexpectedly high propagation time (≥ 900 seconds) to give the godaddy DNS time to propagate the entries! This may be annoying when calling certbot manually but should not be a problem in automated setups.
 
 Credentials
 -----------
 
-Use of this plugin requires a configuration file containing godaddy API credentials, obtained from your [developer.godaddy.com](https://developer.godaddy.com/).
+Use of this plugin requires a configuration file containing a GoDaddy Personal Access Token (PAT), obtained from your [developer.godaddy.com](https://developer.godaddy.com/). The token must have permission to manage DNS records for the domain.
 
 An example `credentials.ini` file:
 
 ``` {.sourceCode .ini}
-dns_godaddy_secret      = 0123456789abcdef0123456789abcdef01234567
-dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123
+dns_godaddy_pat = YOUR_PERSONAL_ACCESS_TOKEN
 ```
+
+To use GoDaddy's OTE test environment, optionally add `dns_godaddy_api_url = https://api.ote-godaddy.com/v3/domains` to the same file.
 
 The path to this file can be provided interactively or using the `--dns-godaddy-credentials` command-line argument. Certbot records the path to this file for use during renewal, but does not store the file's contents.
 
-**CAUTION:** You should protect these API credentials as you would the password to your godaddy account. Users who can read this file can use these credentials to issue arbitrary API calls on your behalf. Users who can cause Certbot to run using these credentials can complete a `dns-01` challenge to acquire new certificates or revoke existing certificates for associated domains, even if those domains aren't being managed by this server.
+The plugin sends the token in the API's `Authorization: Bearer <token>` header. Credentials using the old API key and secret format are no longer supported.
+
+**CAUTION:** Protect this token as you would a password to your GoDaddy account. Users who can read this file can use the token to issue API calls on your behalf. Users who can cause Certbot to run using this token can complete a `dns-01` challenge to acquire new certificates for associated domains, even if those domains aren't being managed by this server.
 
 Certbot will emit a warning if it detects that the credentials file can be accessed by other users on your system. The warning reads "Unsafe permissions on credentials configuration file", followed by the path to the credentials file. This warning will be emitted each time Certbot uses the credentials file, including for renewal, and cannot be silenced except by addressing the issue (e.g., by using a command like `chmod 600` to restrict access to the file).
 
